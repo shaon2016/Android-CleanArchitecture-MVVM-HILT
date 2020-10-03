@@ -10,5 +10,8 @@ sealed class Result<out R> {
 
     data class NetworkError(val error: IOException) : Result<Nothing>()
 
-    data class UnknownError(val exception: Exception?) : Result<Nothing>()
+    data class UnknownError(val exception: Throwable?) : Result<Nothing>()
+
+    data class InProgress(val isLoading:Boolean) : Result<Nothing>()
+
 }

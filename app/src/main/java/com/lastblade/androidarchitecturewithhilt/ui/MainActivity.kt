@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.lastblade.androidarchitecturewithhilt.R
 import com.lastblade.androidarchitecturewithhilt.base.BaseActivity
+import com.lastblade.androidarchitecturewithhilt.data.model.User
+import com.lastblade.androidarchitecturewithhilt.util.Result
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
 
-    private val vm : UserVM by viewModels()
+    private val vm: UserVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,20 +23,35 @@ class MainActivity : BaseActivity() {
 
     }
 
-     override fun viewRelatedTask() {
+    override fun viewRelatedTask() {
         vm.getUsers()
 
-        vm.users.observe(this, Observer {users->
-            users?.let {
-                rvUsers.layoutManager = LinearLayoutManager(this)
-                rvUsers.adapter = UserRvAdapter(users)
+//        vm.users.observe(this, Observer {users->
+//            users?.let {
+//                rvUsers.layoutManager = LinearLayoutManager(this)
+//                rvUsers.adapter = UserRvAdapter(users)
+//            }
+//        })
+
+        vm.result.observe(this, {
+            when (it) {
+                is Result.InProgress -> {
+                    if (it.isLoading)
+                        showProgressing(true)
+                    else
+                        hideProgressing()
+                }
+                is Result.Success -> {
+                    handleSuccessfulResponse(it)
+                }
             }
         })
+    }
 
-        vm.isLoading.observe(this, Observer {
-            if (it) showProgressing(true)
-            else hideProgressing()
-        })
+    private fun handleSuccessfulResponse(success: Result.Success<Any>) {
+        if (success.data is User) {
+
+        }
     }
 
 

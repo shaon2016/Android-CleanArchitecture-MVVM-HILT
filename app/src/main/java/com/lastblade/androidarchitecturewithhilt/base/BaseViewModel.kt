@@ -3,9 +3,11 @@ package com.lastblade.androidarchitecturewithhilt.base
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.lastblade.androidarchitecturewithhilt.data.model.User
+import androidx.lifecycle.viewModelScope
 import com.lastblade.androidarchitecturewithhilt.util.Result
-import retrofit2.Response
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 abstract class BaseViewModel : ViewModel() {
 
@@ -16,31 +18,59 @@ abstract class BaseViewModel : ViewModel() {
     val toast: LiveData<String> get() = _toast
 
 
-    protected inline fun handleResponse(response: Result<Any>, success: (Result.Success<Any>) -> Unit) {
-        when (response) {
-            is Result.Success -> {
-                _isLoading.value = false
-                success(response)
-            }
+//    protected  fun handleResponse(response: Result<Any>) {
+//        _isLoading.value = true
+//        when (response) {
+//            is Result.Success -> {
+//                _isLoading.value = false
+////                success(response)
+//                onSuccess(response.data)
+//            }
+//
+//            is Result.ApiError -> {
+//                _isLoading.value = false
+//                // TODO toast
+//            }
+//
+//            is Result.NetworkError -> {
+//                _isLoading.value = false
+//                _toast.value = response.error.message
+//            }
+//
+//            is Result.UnknownError -> {
+//                _isLoading.value = false
+//                response.exception?.let {
+//                    _toast.value = it.message
+//                }
+//            }
+//        }
+//    }
 
-            is Result.ApiError -> {
-                _isLoading.value = false
-                // TODO toast
-            }
+    private val _result = MutableLiveData<Result<Any>>()
+    val result: LiveData<Result<Any>>
+        get() = _result
 
-            is Result.NetworkError -> {
-                _isLoading.value = false
-                _toast.value = response.error.message
-            }
 
-            is Result.UnknownError -> {
-                _isLoading.value = false
-                response.exception?.let {
-                    _toast.value = it.message
+    fun executeSuspendedFunction(codeBlock: suspend () -> Flow<Result<Any>>) {
+        viewModelScope.launch {
+            codeBlock().collect { result ->
+                _result.value = result
+
+                when (result) {
+                    is Result.ApiError -> {
+
+                    }
+                    is Result.NetworkError -> {
+
+                    }
+                    is Result.UnknownError -> {
+
+                    }
                 }
             }
         }
     }
+
 
 }
 
