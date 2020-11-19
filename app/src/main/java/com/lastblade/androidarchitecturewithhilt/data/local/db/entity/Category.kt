@@ -1,4 +1,4 @@
-package com.blackice.business.data.local_db.entity
+package com.lastblade.androidarchitecturewithhilt.data.local.db.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -7,10 +7,10 @@ import androidx.room.PrimaryKey
 @Entity
 class Category {
 
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "localId")  public var localId:Int = 0
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "cat_localId")
+    public var localId:Int = 0
     @ColumnInfo(name = "id") lateinit var id: String
-    @ColumnInfo(name = "parent_id") lateinit var parent_id: String
     @ColumnInfo(name = "name") lateinit var name: String
-    @ColumnInfo(name = "image") lateinit var image: String
 
 }
