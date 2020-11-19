@@ -1,20 +1,20 @@
-package com.lastblade.androidarchitecturewithhilt.base
+package com.ujala.dukaan.ui.base
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import androidx.fragment.app.Fragment
+import com.lastblade.androidarchitecturewithhilt.base.Task
 import com.lastblade.androidarchitecturewithhilt.util.D
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
-abstract class BaseActivity : AppCompatActivity(), Task {
 
+@AndroidEntryPoint
+abstract class BaseFragment : Fragment(), Task {
     private val pbDialog by lazy {
-        D.showProgressDialog(this)
+        D.showProgressDialog(requireContext())
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewRelatedTask()
     }
 
@@ -26,8 +26,4 @@ abstract class BaseActivity : AppCompatActivity(), Task {
     fun hideProgressing() {
         if (pbDialog.isShowing) pbDialog.dismiss()
     }
-}
-
-interface Task {
-    fun viewRelatedTask()
 }

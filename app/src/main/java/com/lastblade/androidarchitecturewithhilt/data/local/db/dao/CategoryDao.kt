@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import com.blackice.business.data.local_db.entity.Category
+import com.lastblade.androidarchitecturewithhilt.data.local.db.entity.Category
 
 
 @Dao
@@ -12,9 +12,6 @@ interface CategoryDao {
 
     @Query("SELECT * FROM Category")
     abstract fun getAll(): List<Category>
-
-    @Query("SELECT * FROM Category where localId=:localId")
-    abstract fun getAllById(localId: Int): List<Category>
 
     @Insert
     abstract fun insert(categories: List<Category>): List<Long>

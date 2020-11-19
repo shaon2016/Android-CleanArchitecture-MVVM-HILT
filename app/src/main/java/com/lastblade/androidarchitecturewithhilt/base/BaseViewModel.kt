@@ -1,11 +1,14 @@
-package com.lastblade.androidarchitecturewithhilt.base
+package com.ujala.dukaan.ui.base
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.lastblade.androidarchitecturewithhilt.data.model.User
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import com.lastblade.androidarchitecturewithhilt.util.Result
-import retrofit2.Response
 
 abstract class BaseViewModel : ViewModel() {
 
@@ -15,28 +18,31 @@ abstract class BaseViewModel : ViewModel() {
     protected val _toast = MutableLiveData<String>()
     val toast: LiveData<String> get() = _toast
 
+    protected val _snackBarMsg = MutableLiveData<String>()
+    val snackBarMsg: LiveData<String> get() = _snackBarMsg
 
-    protected inline fun handleResponse(response: Result<Any>, success: (Result.Success<Any>) -> Unit) {
-        when (response) {
-            is Result.Success -> {
-                _isLoading.value = false
-                success(response)
-            }
+    private val _result = MutableLiveData<Result<Any>>()
+    val result: LiveData<Result<Any>>
+        get() = _result
 
-            is Result.ApiError -> {
-                _isLoading.value = false
-                // TODO toast
-            }
 
-            is Result.NetworkError -> {
-                _isLoading.value = false
-                _toast.value = response.error.message
-            }
+    fun executeSuspendedFunction(codeBlock: suspend () -> Flow<Result<Any>>) {
+        viewModelScope.launch {
+            codeBlock().collect { result ->
+                _result.value = result
 
-            is Result.UnknownError -> {
-                _isLoading.value = false
-                response.exception?.let {
-                    _toast.value = it.message
+                when (result) {
+                    is Result.ApiError -> {
+                        Log.d("RetrofitResult", result.errorBody.toString())
+                    }
+                    is Result.NetworkError -> {
+                        Log.d("RetrofitResult", result.error.toString())
+                        result.error.printStackTrace()
+                    }
+                    is Result.UnknownError -> {
+                        result.exception?.printStackTrace()
+                        Log.d("RetrofitResult", result.exception.toString())
+                    }
                 }
             }
         }

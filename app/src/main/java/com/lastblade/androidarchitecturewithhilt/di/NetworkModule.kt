@@ -3,7 +3,7 @@ package com.lastblade.androidarchitecturewithhilt.di
 import androidx.annotation.NonNull
 import com.lastblade.androidarchitecturewithhilt.data.local.preference.PreferencesHelper
 import com.lastblade.androidarchitecturewithhilt.data.remote.ApiHelper
-import com.lastblade.androidarchitecturewithhilt.data.remote.ApiService
+import com.ujala.dukaan.data.remote.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -51,7 +51,7 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://shaoniiuc.com/")
+            .baseUrl("BASE_URL")
             .addConverterFactory(GsonConverterFactory.create())
             .client(okHttpClient)
             .build()

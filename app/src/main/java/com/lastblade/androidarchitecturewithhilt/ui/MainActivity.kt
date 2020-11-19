@@ -1,19 +1,15 @@
 package com.lastblade.androidarchitecturewithhilt.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.lastblade.androidarchitecturewithhilt.R
 import com.lastblade.androidarchitecturewithhilt.base.BaseActivity
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
+import com.lastblade.androidarchitecturewithhilt.data.model.User
+import  com.lastblade.androidarchitecturewithhilt.util.Result
 
 class MainActivity : BaseActivity() {
 
-    private val vm : UserVM by viewModels()
+    private val vm: UserVM by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,21 +17,34 @@ class MainActivity : BaseActivity() {
 
     }
 
-     override fun viewRelatedTask() {
-        vm.getUsers()
+    override fun viewRelatedTask() {
+        vm.createUser("13131")
 
-        vm.users.observe(this, Observer {users->
-            users?.let {
-                rvUsers.layoutManager = LinearLayoutManager(this)
-                rvUsers.adapter = UserRvAdapter(users)
+        vm.result.observe(this, {
+            it?.let {
+                when (it) {
+                    is Result.InProgress -> {
+                        if (it.isLoading)
+                            showProgressing()
+                        else
+                            hideProgressing()
+                    }
+                    is Result.Success -> {
+                        handleSuccessfulResponse(it)
+                    }
+                }
             }
         })
 
-        vm.isLoading.observe(this, Observer {
-            if (it) showProgressing(true)
-            else hideProgressing()
-        })
     }
 
+
+    private fun handleSuccessfulResponse(success: Result.Success<Any>) {
+
+        if (success.type == User::class.java) {
+            // TODO Do your work
+        } else {
+        }
+    }
 
 }

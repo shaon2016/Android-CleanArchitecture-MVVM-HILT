@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">AndroidArchitectureWithHilt</string>
+    <string name="please_wait">Please wait..</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+    <string name="mobile_no_valid_msg">Mobile is not valid</string>
 </resources>
